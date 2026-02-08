@@ -7,7 +7,7 @@ const BASE_URL = `http://localhost:${PORT}`;
 
 let wranglerProcess: ChildProcess | null = null;
 
-function waitForReady(process: ChildProcess, timeoutMs = 15000): Promise<void> {
+function waitForReady(process: ChildProcess, timeoutMs = 30000): Promise<void> {
   return new Promise((resolve, reject) => {
     let output = "";
 
