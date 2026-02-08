@@ -7,16 +7,20 @@ const BASE_URL = `http://localhost:${PORT}`;
 
 let wranglerProcess: ChildProcess | null = null;
 
-function waitForReady(process: ChildProcess, timeoutMs = 30000): Promise<void> {
+function waitForReady(process: ChildProcess, timeoutMs = 15000): Promise<void> {
   return new Promise((resolve, reject) => {
+    let output = "";
+
     const timeout = setTimeout(() => {
-      reject(new Error(`Wrangler did not start within ${timeoutMs / 1000}s`));
+      reject(new Error(`Wrangler did not start within ${timeoutMs / 1000}s\n${output}`));
     }, timeoutMs);
 
     const onData = (data: Buffer) => {
-      const output = data.toString();
+      const chunk = data.toString();
+      output += chunk;
+
       // Wrangler prints "Ready on http://localhost:PORT" when ready
-      if (output.includes("Ready on")) {
+      if (chunk.includes("Ready on")) {
         clearTimeout(timeout);
         process.stdout?.off("data", onData);
         process.stderr?.off("data", onData);
@@ -29,7 +33,7 @@ function waitForReady(process: ChildProcess, timeoutMs = 30000): Promise<void> {
 
     process.on("exit", (code) => {
       clearTimeout(timeout);
-      reject(new Error(`Wrangler exited with code ${code}`));
+      reject(new Error(`Wrangler exited with code ${code}\n${output}`));
     });
   });
 }
