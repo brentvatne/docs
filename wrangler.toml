@@ -1,0 +1,12 @@
+# Wrangler configuration for Cloudflare Pages local development and testing
+# See: https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+
+name = "expo-docs"
+compatibility_date = "2024-01-01"
+
+# Output directory for static assets (Next.js export)
+pages_build_output_dir = "out"
+
+# Local development settings
+[dev]
+port = 8788
