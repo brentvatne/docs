@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:worker": "./scripts/test-worker.sh"
+    "test:worker": "tsx scripts/test-worker.ts"
   },
   "dependencies": {
     "@heroicons/react": "v1",
@@ -29,6 +29,7 @@
     "typescript": "5.0.4"
   },
   "devDependencies": {
+    "tsx": "^4.0.0",
     "wrangler": "^3.0.0"
   }
 }
