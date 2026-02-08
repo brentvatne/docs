@@ -7,8 +7,19 @@ const BASE_URL = `http://localhost:${PORT}`;
 
 let wranglerProcess: ChildProcess | null = null;
 
-async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+async function waitForServer(url: string, maxAttempts = 30, intervalMs = 200): Promise<void> {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      const response = await fetch(url);
+      if (response.ok || response.status === 404) {
+        return;
+      }
+    } catch {
+      // Server not ready yet, continue polling
+    }
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+  }
+  throw new Error(`Server did not start within ${(maxAttempts * intervalMs) / 1000}s`);
 }
 
 async function cleanup(): Promise<void> {
@@ -93,8 +104,8 @@ async function startWrangler(): Promise<void> {
     stdio: ["ignore", "pipe", "pipe"],
   });
 
-  // Wait for wrangler to start
-  await sleep(4000);
+  // Poll until server is ready
+  await waitForServer(BASE_URL);
 
   if (wranglerProcess.exitCode !== null) {
     throw new Error(`Wrangler exited with code ${wranglerProcess.exitCode}`);
